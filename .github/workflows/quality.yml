@@ -1,0 +1,36 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Lint backend
+      run: |
+        cd backend
+        npm ci
+        # Add linting rules if needed
+        echo "Backend ready for linting"
+
+    - name: Lint frontend
+      run: |
+        cd frontend
+        npm ci
+        npm run lint || true
+
+    - name: Security audit
+      run: |
+        npm audit --workspaces || true

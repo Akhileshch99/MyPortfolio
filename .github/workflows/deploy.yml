@@ -1,0 +1,81 @@
+name: Deploy Application
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:6.0
+        options: >-
+          --health-cmd "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+
+    - name: Test backend
+      run: |
+        cd backend
+        npm run dev &
+        sleep 5
+        curl http://localhost:5000/api/health
+      env:
+        MONGODB_URI: mongodb://localhost:27017/portfolio-test
+        JWT_SECRET: test_secret
+        NODE_ENV: test
+
+  docker-build:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build backend image
+      uses: docker/build-push-action@v4
+      with:
+        context: ./backend
+        push: false
+        tags: portfolio-backend:latest
+
+    - name: Build frontend image
+      uses: docker/build-push-action@v4
+      with:
+        context: ./frontend
+        push: false
+        tags: portfolio-frontend:latest
