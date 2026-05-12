@@ -58,7 +58,7 @@ export default function Home() {
               { category: 'Backend', skills: ['Node.js', 'Express','Spring Boot'], icon: '⚙️' },
               { category: 'Databases', skills: ['MongoDB', 'MySQL', 'PostgreSQL'], icon: '🗄️' },
               { category: 'AI/ML', skills: ['Machine Learning', 'Data Science'], icon: '🤖' },
-              { category: 'Tools', skills: ['Git', 'Docker', 'VS Code','GitHub'], icon: '🛠️' }
+              { category: 'Tools', skills: ['Git', 'VS Code','GitHub'], icon: '🛠️' }
             ].map((skillGroup, idx) => (
               <div
                 key={idx}

@@ -264,7 +264,7 @@ export default function Contact() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="/projects" className="btn-primary">View My Work</a>
-            <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="btn-secondary">
+            <a href="https://linkedin.com/in/akhilesh-chaudhary-243257297" target="_blank" rel="noopener noreferrer" className="btn-secondary">
               Connect on LinkedIn
             </a>
           </div>
